@@ -1,27 +1,32 @@
+# install requirements
+import pip
+try:
+    import psutil
+    import cpuinfo
+    from pyrogram import Client, filters
+except:
+    pip.main(["install", "psutil", "py-cpuinfo", "pyrogram", "--upgrade"])
+    import psutil
+    import cpuinfo
+    from pyrogram import Client, filters
+# ------------------------------------------------------------
 import os
-import psutil
 import sys
 import os
 import re
 import subprocess
 import random
 import platform
-import cpuinfo
 import asyncio
-from pyrogram import Client, filters
 from time import perf_counter
-
 # ------------------------------------------------------------
-owner = 1084116847  # Write you Telegram id
-version = "1.2.3"
+owner = [1084116847, 5631980944, 5104909433, 5466899247]  # Write you Telegram id
+version = "1.2.4"
 # ------------------------------------------------------------
 api_id = 2860432
 api_hash = "2fde6ca0f8ae7bb58844457a239c7214"
 app = Client("my_account", api_id=api_id, api_hash=api_hash)
 # ------------------------------------------------------------
-
-with app:
-    app.send_message(owner, f"Server started!\nVersion: **{version}**")
 
 
 @app.on_message(filters.command(["start", "help"]) & filters.user(owner))
@@ -160,7 +165,42 @@ async def sh(client, message):
 
 
 @app.on_message(filters.command("bots") & filters.user(owner))
-async def bots(client, message):
+def botes(client, message):
+    bots(client, message)
+
+
+@app.on_message(filters.command("restart") & filters.user(owner))
+async def restart(client, message):
+    for i in owner:
+        try:
+            await app.send_message(i, f"""{message.from_user.mention} send command to server (restart with "restart_daemon.sh" script)""")
+        except:
+            pass
+    os.system(f"sh restart_daemon.sh")
+
+
+@app.on_message(filters.command("stop") & filters.user(owner))
+async def st_bots(client, message):
+    for i in owner:
+        try:
+            await app.send_message(i, f"{message.from_user.mention} restarting server...")
+        except:
+            pass
+    os.system("sudo reboot")
+
+
+def prestart(api_id, api_hash):
+    app = Client("my_account", api_id=api_id, api_hash=api_hash)
+    with app:
+        for i in owner:
+            try:
+                app.send_message(i, f"Server started!\nVersion: **{version}**")
+            except:
+                pass
+        bots(app, "0")
+
+
+def bots(app, message):
     text = ""
 
     for i in os.listdir("."):
@@ -181,20 +221,20 @@ async def bots(client, message):
 
     if text == "":
         text = "File autostart not found..."
-    await app.send_message(message.chat.id, text)
 
+    try:
+        usernames = message.from_user.mention
+    except:
+        usernames = "ROOT"
 
-@app.on_message(filters.command("restart") & filters.user(owner))
-async def restart(client, message):
-    await app.send_message(message.chat.id, "Send command to server (restart with systemctl)")
-    os.system(f"sh restart_daemon.sh")
-
-
-@app.on_message(filters.command("stop") & filters.user(owner))
-async def st_bots(client, message):
-    await app.send_message(message.chat.id, "⚠️  Restart server...")
-    os.system("sudo reboot")
+    text = f"{usernames} trying to running autostart tasks\n{text}"
+    for i in owner:
+        try:
+            app.send_message(i, text)
+        except:
+            pass
 
 
 while True:
+    prestart(api_id, api_hash)
     app.run()
