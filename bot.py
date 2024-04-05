@@ -20,7 +20,7 @@ import platform
 import asyncio
 from time import perf_counter
 # ------------------------------------------------------------
-owner = [1084116847, 5631980944, 5104909433, 5466899247]  # Write you Telegram id
+owner = [1084116847, 5466899247]  # Write you Telegram id
 version = "1.2.4"
 # ------------------------------------------------------------
 api_id = 2860432
@@ -238,3 +238,5 @@ def bots(app, message):
 while True:
     prestart(api_id, api_hash)
     app.run()
+
+# bruh
